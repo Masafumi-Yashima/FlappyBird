@@ -16,6 +16,9 @@ class GameScene: SKScene {
 
     //SKView上にシーンが表示された時に呼ばれるメソッド
     override func didMove(to view: SKView) {
+        //重力の設定
+        physicsWorld.gravity = CGVector(dx: 0, dy: 4)
+        
         //背景色を設定
         backgroundColor = UIColor(red: 0.15, green: 0.75, blue: 0.90, alpha: 1)
         
