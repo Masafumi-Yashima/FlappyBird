@@ -12,6 +12,7 @@ class GameScene: SKScene {
     
     var scrollNode:SKNode!
     var wallNode:SKNode!
+    var bird:SKSpriteNode!
 
     //SKView上にシーンが表示された時に呼ばれるメソッド
     override func didMove(to view: SKView) {
@@ -30,7 +31,7 @@ class GameScene: SKScene {
         setupGround()
         setupCloud()
         setupWall()
-    
+        setupBird()
     }
     
     func setupGround() {
@@ -177,6 +178,27 @@ class GameScene: SKScene {
         wallNode.run(repeatForeverAnimation)
     }
     
+    func setupBird() {
+        //鳥の画像を２種類読み込む
+        let birdTextureA = SKTexture(imageNamed: "bird_a")
+        birdTextureA.filteringMode = .linear
+        let birdTextureB = SKTexture(imageNamed: "bird_b")
+        birdTextureB.filteringMode = .linear
+        
+        //2種類のテクスチャを交互に表示するアニメーションを作成
+        let texturesAnimation = SKAction.animate(with: [birdTextureA,birdTextureB], timePerFrame: 0.2)
+        let flap = SKAction.repeatForever(texturesAnimation)
+        
+        //スプライトを作成
+        bird = SKSpriteNode(texture: birdTextureA)
+        bird.position = CGPoint(x: self.frame.size.width * 0.2, y: self.frame.size.height * 0.7)
+        
+        //アニメーションを設定
+        bird.run(flap)
+        
+        //スプライトを追加する
+        addChild(bird)
+    }
     
     /*
     // Only override draw() if you perform custom drawing.
