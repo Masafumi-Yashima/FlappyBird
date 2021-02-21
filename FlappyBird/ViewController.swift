@@ -31,6 +31,12 @@ class ViewController: UIViewController {
         
     }
 
+    //ステータスバーを消す
+    override var prefersStatusBarHidden: Bool {
+        get {
+            return true
+        }
+    }
 
 }
 

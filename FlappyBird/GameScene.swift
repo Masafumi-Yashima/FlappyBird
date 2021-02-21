@@ -112,11 +112,12 @@ class GameScene: SKScene {
         let wallTexture = SKTexture(imageNamed: "wall")
         wallTexture.filteringMode = .linear
         
+        //壁の移動に関するアクションの作成
         //移動する距離を計算
         let movingDistance = CGFloat(self.frame.size.width + wallTexture.size().width)
         
         //画面外まで移動するアクションを作成
-        let moveWall = SKAction.moveBy(x: movingDistance, y: 0, duration: 4)
+        let moveWall = SKAction.moveBy(x: -movingDistance, y: 0, duration: 4)
         
         //自身を取り除くアクションを作成
         let removeWall = SKAction.removeFromParent()
@@ -124,6 +125,7 @@ class GameScene: SKScene {
         //2つのアニメーションを順に実行するアクションを作成
         let wallAnimation = SKAction.sequence([moveWall,removeWall])
         
+        //壁の作成に関するアクションの作成
         //鳥の画像サイズを取得
         let birdSize = SKTexture(imageNamed: "bird_a").size()
         
@@ -139,7 +141,7 @@ class GameScene: SKScene {
         let under_wall_lowest_y = center_y - slit_lenght/2 - wallTexture.size().height/2 - random_y_range/2
         
         //壁を生成するアクションを作成
-        let createWallAnimation = SKAction.run {
+        let createWallAnimation = SKAction.run ({
             //壁関連のノードを載せるノードを作成
             let wall = SKNode()
             wall.position = CGPoint(x: self.frame.size.width + wallTexture.size().width/2, y: 0)
@@ -164,7 +166,7 @@ class GameScene: SKScene {
             wall.run(wallAnimation)
             
             self.wallNode.addChild(wall)
-        }
+        })
         
         //次の壁作成までの待ちのアクションを作成
         let waitAnimation = SKAction.wait(forDuration: 2)
