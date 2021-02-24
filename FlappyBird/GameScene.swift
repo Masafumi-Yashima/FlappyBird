@@ -226,6 +226,15 @@ class GameScene: SKScene {
         addChild(bird)
     }
     
+    //画面をタップしたときに呼ばれる
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        //鳥の速度をゼロにする
+        bird.physicsBody?.velocity = CGVector.zero
+        
+        //鳥に縦方向の力を与える
+        bird.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 15))
+    }
+    
     /*
     // Only override draw() if you perform custom drawing.
     // An empty implementation adversely affects performance during animation.
