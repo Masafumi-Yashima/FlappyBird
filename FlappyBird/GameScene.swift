@@ -22,6 +22,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     //スコア用
     var score = 0
+    let userDefaults:UserDefaults = UserDefaults.standard
 
     //SKView上にシーンが表示された時に呼ばれるメソッド
     override func didMove(to view: SKView) {
@@ -179,7 +180,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             //下側の壁を作成
             let under = SKSpriteNode(texture: wallTexture)
             under.position = CGPoint(x: 0, y: under_wall_y)
-            print("under_wall_y = \(under_wall_y)")
+            //print("under_wall_y = \(under_wall_y)")
             
             //スプライトに物理演算を設定する
             under.physicsBody = SKPhysicsBody(rectangleOf: wallTexture.size())
@@ -193,7 +194,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             //上側の壁を作成
             let upper = SKSpriteNode(texture: wallTexture)
             upper.position = CGPoint(x: 0, y: under_wall_y + slit_lenght + wallTexture.size().height)
-            print("upper_wall_y = \(under_wall_y + slit_lenght + wallTexture.size().height)")
+            //print("upper_wall_y = \(under_wall_y + slit_lenght + wallTexture.size().height)")
             
             //スプライトに物理演算を設定する
             upper.physicsBody = SKPhysicsBody(rectangleOf: wallTexture.size())
@@ -287,6 +288,15 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             //スコア用の物体と衝突した
             print("ScoreUp")
             score += 1
+            
+            //ベストスコア更新か確認する
+            var bestscore = userDefaults.integer(forKey: "BEST")
+            if score > bestscore {
+                bestscore = score
+                userDefaults.set(bestscore, forKey: "BEST")
+                userDefaults.synchronize()
+            }
+            
         } else {
             //壁か地面と衝突した
             print("GameOver")
