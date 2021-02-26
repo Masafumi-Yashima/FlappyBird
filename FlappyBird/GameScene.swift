@@ -262,11 +262,18 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     //画面をタップしたときに呼ばれる
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //鳥の速度をゼロにする
-        bird.physicsBody?.velocity = CGVector.zero
-        
-        //鳥に縦方向の力を与える
-        bird.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 15))
+        //ゲーム中の時
+        if scrollNode.speed > 0 {
+            //鳥の速度をゼロにする
+            bird.physicsBody?.velocity = CGVector.zero
+            
+            //鳥に縦方向の力を与える
+            bird.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 15))
+        }
+        //ゲームが停止した時
+        else if bird.speed == 0{
+            restart()
+        }
     }
     
     //SKPhysicsContactDelegateのメソッドで衝突した時に呼ばれる
@@ -296,6 +303,20 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
                 self.bird.speed = 0
             })
         }
+    }
+    
+    func restart() {
+        score = 0
+        
+        bird.position = CGPoint(x: self.frame.size.width * 0.2, y: self.frame.size.height * 0.7)
+        //bird.physicsBody?.velocity = CGVector.zero
+        bird.physicsBody?.collisionBitMask = groundCategory | wallCategory
+        bird.zRotation = 0
+        
+        wallNode.removeAllChildren()
+        
+        bird.speed = 1
+        scrollNode.speed = 1
     }
     
     /*
