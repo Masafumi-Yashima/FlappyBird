@@ -12,18 +12,23 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     var scrollNode:SKNode!
     var wallNode:SKNode!
+    var wall:SKNode!
     var bird:SKSpriteNode!
+    var item:SKSpriteNode!
     
     //衝突判定カテゴリー
-    let birdCategory:UInt32 = 1<<0 //0...00001
-    let groundCategory:UInt32 = 1<<1 //0...00010
-    let wallCategory:UInt32 = 1<<2 //0...00100
-    let scoreCategory:UInt32 = 1<<3 //0...01000
+    let birdCategory:UInt32 = 1<<0           //0...0000001
+    let groundCategory:UInt32 = 1<<1         //0...0000010
+    let wallCategory:UInt32 = 1<<2           //0...0000100
+    let scoreCategory:UInt32 = 1<<3          //0...0001000
+    let itemCategory:UInt32 = 1<<4           //0...0010000
     
     //スコア用
     var score = 0
+    var score_item = 0
     var scoreLabelNode:SKLabelNode!
     var bestScoreLabelNode:SKLabelNode!
+    var itemScoreLabelNode:SKLabelNode!
     let userDefaults:UserDefaults = UserDefaults.standard
 
     //SKView上にシーンが表示された時に呼ばれるメソッド
@@ -145,7 +150,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         let movingDistance = CGFloat(self.frame.size.width + wallTexture.size().width)
         
         //画面外まで移動するアクションを作成
-        let moveWall = SKAction.moveBy(x: -movingDistance, y: 0, duration: 4)
+        let moveWall = SKAction.moveBy(x: -2*movingDistance, y: 0, duration: 8)
         
         //自身を取り除くアクションを作成
         let removeWall = SKAction.removeFromParent()
@@ -169,12 +174,12 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         let under_wall_lowest_y = center_y - slit_lenght/2 - wallTexture.size().height/2 - random_y_range/2
         
         //壁を生成するアクションを作成
-        let createWallAnimation = SKAction.run ({ [self] in
+        let createWallAnimation = SKAction.run ({
             //壁関連のノードを載せるノードを作成
-            let wall = SKNode()
-            wall.position = CGPoint(x: self.frame.size.width + wallTexture.size().width/2, y: 0)
+            self.wall = SKNode()
+            self.wall.position = CGPoint(x: self.frame.size.width + wallTexture.size().width/2, y: 0)
             //雲より手前地面より奥に配置
-            wall.zPosition = -50
+            self.wall.zPosition = -50
             
             //0~random_y_rangemまでのランダム値を生成
             let random_y = CGFloat.random(in: 0..<random_y_range)
@@ -184,30 +189,22 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             //下側の壁を作成
             let under = SKSpriteNode(texture: wallTexture)
             under.position = CGPoint(x: 0, y: under_wall_y)
-            //print("under_wall_y = \(under_wall_y)")
-            
             //スプライトに物理演算を設定する
             under.physicsBody = SKPhysicsBody(rectangleOf: wallTexture.size())
             under.physicsBody?.categoryBitMask = self.wallCategory
-            
             //衝突の時に動かないように設定する
             under.physicsBody?.isDynamic = false
-            
-            wall.addChild(under)
+            self.wall.addChild(under)
             
             //上側の壁を作成
             let upper = SKSpriteNode(texture: wallTexture)
             upper.position = CGPoint(x: 0, y: under_wall_y + slit_lenght + wallTexture.size().height)
-            //print("upper_wall_y = \(under_wall_y + slit_lenght + wallTexture.size().height)")
-            
             //スプライトに物理演算を設定する
             upper.physicsBody = SKPhysicsBody(rectangleOf: wallTexture.size())
             upper.physicsBody?.categoryBitMask = self.wallCategory
-            
             //衝突の時に動かなように設定する
             upper.physicsBody?.isDynamic = false
-            
-            wall.addChild(upper)
+            self.wall.addChild(upper)
             
             //スコアアップ用のノード
             let scoreNode = SKNode()
@@ -216,11 +213,38 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             scoreNode.physicsBody?.isDynamic = false
             scoreNode.physicsBody?.categoryBitMask = self.scoreCategory
             scoreNode.physicsBody?.contactTestBitMask = self.birdCategory
-            wall.addChild(scoreNode)
+            self.wall.addChild(scoreNode)
             
-            wall.run(wallAnimation)
+            //アイテムを作成
+            let randomItem_Num = CGFloat.random(in: 0...1)
+            let item_x = CGFloat(upper.size.width + self.bird.size.width*2)
+            let item_y = center_y + self.frame.size.height/2 * CGFloat.random(in: -0.5...0.5)
+            if randomItem_Num < 1/3 {
+                //appleを出現
+                let itemTexture = SKTexture(imageNamed: "apple")
+                itemTexture.filteringMode = .linear
+                self.item = SKSpriteNode(texture: itemTexture)
+            } else if randomItem_Num >= 1/3 && randomItem_Num < 2/3 {
+                //greenappleを出現
+                let itemTexture = SKTexture(imageNamed: "apple_green")
+                itemTexture.filteringMode = .linear
+                self.item = SKSpriteNode(texture: itemTexture)
+            } else {
+                //poisonappleを出現
+                let itemTexture = SKTexture(imageNamed: "apple_poison")
+                itemTexture.filteringMode = .linear
+                self.item = SKSpriteNode(texture: itemTexture)
+            }
+            self.item.position = CGPoint(x: item_x, y: item_y)
+            self.item.physicsBody = SKPhysicsBody(circleOfRadius: self.item.size.height/2)
+            self.item.physicsBody?.isDynamic = false
+            self.item.physicsBody?.categoryBitMask = self.itemCategory
+            self.item.physicsBody?.contactTestBitMask = self.birdCategory
+            self.wall.addChild(self.item)
             
-            self.wallNode.addChild(wall)
+            self.wall.run(wallAnimation)
+            
+            self.wallNode.addChild(self.wall)
         })
         
         //次の壁作成までの待ちのアクションを作成
@@ -302,7 +326,13 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
                 userDefaults.set(bestscore, forKey: "BEST")
                 userDefaults.synchronize()
             }
-            
+        }
+        //アイテムに衝突した時の処理
+        else if (contact.bodyA.categoryBitMask & itemCategory) == itemCategory || (contact.bodyB.categoryBitMask & itemCategory) == itemCategory {
+            contact.bodyB.node?.removeFromParent()
+            print("アイテム獲得")
+            score_item += 1
+            itemScoreLabelNode.text = "Item Score:\(score_item)"
         } else {
             //壁か地面と衝突した
             print("GameOver")
@@ -324,6 +354,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     func restart() {
         score = 0
         scoreLabelNode.text = "Score:\(score)"
+        itemScoreLabelNode.text = "Item Score:\(score)"
         
         bird.position = CGPoint(x: self.frame.size.width * 0.2, y: self.frame.size.height * 0.7)
         bird.physicsBody?.velocity = CGVector.zero
@@ -341,15 +372,23 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         scoreLabelNode = SKLabelNode()
         scoreLabelNode.fontColor = UIColor.black
         scoreLabelNode.position = CGPoint(x: 10, y: self.frame.size.height - 60)
-        //一番手前に表示する
         scoreLabelNode.zPosition = 100
         scoreLabelNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
         scoreLabelNode.text = "Score:\(score)"
         self.addChild(scoreLabelNode)
         
+        score_item = 0
+        itemScoreLabelNode = SKLabelNode()
+        itemScoreLabelNode.fontColor = UIColor.black
+        itemScoreLabelNode.position = CGPoint(x: 10, y: self.frame.size.height - 90)
+        itemScoreLabelNode.zPosition = 100
+        itemScoreLabelNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
+        itemScoreLabelNode.text = "Item Score:\(score_item)"
+        self.addChild(itemScoreLabelNode)
+        
         bestScoreLabelNode = SKLabelNode()
         bestScoreLabelNode.fontColor = UIColor.black
-        bestScoreLabelNode.position = CGPoint(x: 10, y: self.frame.size.height - 90)
+        bestScoreLabelNode.position = CGPoint(x: 10, y: self.frame.size.height - 120)
         bestScoreLabelNode.zPosition = 100
         bestScoreLabelNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
         let bestScore = userDefaults.integer(forKey: "BEST")
