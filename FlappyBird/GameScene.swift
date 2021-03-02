@@ -55,6 +55,9 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         setupBird()
         
         setupScoreLabel()
+        
+        let BGM = SKAction.repeatForever(SKAction.playSoundFileNamed("BGM.mp3", waitForCompletion: true))
+        self.run(BGM)
     }
     
     func setupGround() {
