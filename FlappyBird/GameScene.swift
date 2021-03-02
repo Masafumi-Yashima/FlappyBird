@@ -12,7 +12,6 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     var scrollNode:SKNode!
     var wallNode:SKNode!
-    //var wall:SKNode!
     var bird:SKSpriteNode!
     var item:SKSpriteNode!
     
@@ -360,7 +359,8 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     func restart() {
         score = 0
         scoreLabelNode.text = "Score:\(score)"
-        itemScoreLabelNode.text = "Item Score:\(score)"
+        score_item = 0
+        itemScoreLabelNode.text = "Item Score:\(score_item)"
         
         bird.position = CGPoint(x: self.frame.size.width * 0.2, y: self.frame.size.height * 0.7)
         bird.physicsBody?.velocity = CGVector.zero
