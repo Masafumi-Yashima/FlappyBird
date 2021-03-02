@@ -12,7 +12,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     
     var scrollNode:SKNode!
     var wallNode:SKNode!
-    var wall:SKNode!
+    //var wall:SKNode!
     var bird:SKSpriteNode!
     var item:SKSpriteNode!
     
@@ -179,10 +179,10 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
         //壁を生成するアクションを作成
         let createWallAnimation = SKAction.run ({
             //壁関連のノードを載せるノードを作成
-            self.wall = SKNode()
-            self.wall.position = CGPoint(x: self.frame.size.width + wallTexture.size().width/2, y: 0)
+            let wall = SKNode()
+            wall.position = CGPoint(x: self.frame.size.width + wallTexture.size().width/2, y: 0)
             //雲より手前地面より奥に配置
-            self.wall.zPosition = -50
+            wall.zPosition = -50
             
             //0~random_y_rangemまでのランダム値を生成
             let random_y = CGFloat.random(in: 0..<random_y_range)
@@ -197,7 +197,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             under.physicsBody?.categoryBitMask = self.wallCategory
             //衝突の時に動かないように設定する
             under.physicsBody?.isDynamic = false
-            self.wall.addChild(under)
+            wall.addChild(under)
             
             //上側の壁を作成
             let upper = SKSpriteNode(texture: wallTexture)
@@ -207,7 +207,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             upper.physicsBody?.categoryBitMask = self.wallCategory
             //衝突の時に動かなように設定する
             upper.physicsBody?.isDynamic = false
-            self.wall.addChild(upper)
+            wall.addChild(upper)
             
             //スコアアップ用のノード
             let scoreNode = SKNode()
@@ -216,7 +216,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             scoreNode.physicsBody?.isDynamic = false
             scoreNode.physicsBody?.categoryBitMask = self.scoreCategory
             scoreNode.physicsBody?.contactTestBitMask = self.birdCategory
-            self.wall.addChild(scoreNode)
+            wall.addChild(scoreNode)
             
             //アイテムを作成
             let randomItem_Num = CGFloat.random(in: 0...1)
@@ -243,11 +243,11 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             self.item.physicsBody?.isDynamic = false
             self.item.physicsBody?.categoryBitMask = self.itemCategory
             self.item.physicsBody?.contactTestBitMask = self.birdCategory
-            self.wall.addChild(self.item)
+            wall.addChild(self.item)
             
-            self.wall.run(wallAnimation)
+            wall.run(wallAnimation)
             
-            self.wallNode.addChild(self.wall)
+            self.wallNode.addChild(wall)
         })
         
         //次の壁作成までの待ちのアクションを作成
