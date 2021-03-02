@@ -333,6 +333,9 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             print("アイテム獲得")
             score_item += 1
             itemScoreLabelNode.text = "Item Score:\(score_item)"
+            //アイテム獲得音を鳴らす
+            let getMusic = SKAction.playSoundFileNamed("get.mp3", waitForCompletion: true)
+            self.run(getMusic)
         } else {
             //壁か地面と衝突した
             print("GameOver")
