@@ -13,7 +13,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     var scrollNode:SKNode!
     var wallNode:SKNode!
     var bird:SKSpriteNode!
-    var item:SKSpriteNode!
+//    var item:SKSpriteNode!
     
     //衝突判定カテゴリー
     let birdCategory:UInt32 = 1<<0           //0...0000001
@@ -220,36 +220,83 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             wall.addChild(scoreNode)
             
             //アイテムを作成
-            let randomItem_Num = CGFloat.random(in: 0...1)
-            let item_x = CGFloat(upper.size.width + self.bird.size.width*2)
-            let item_y = center_y + self.frame.size.height/2 * CGFloat.random(in: -0.5...0.5)
-            if randomItem_Num < 3/10 {
-                //appleを出現
-                let itemTexture = SKTexture(imageNamed: "apple")
-                itemTexture.filteringMode = .linear
-                self.item = SKSpriteNode(texture: itemTexture)
-                self.item.physicsBody?.categoryBitMask = self.appleCategory
-            } else if randomItem_Num >= 3/10 && randomItem_Num < 2/5 {
-                //greenappleを出現
-                let itemTexture = SKTexture(imageNamed: "apple_green")
-                itemTexture.filteringMode = .linear
-                self.item = SKSpriteNode(texture: itemTexture)
-                self.item.physicsBody?.categoryBitMask = self.greenappleCategory
-            } else if randomItem_Num >= 2/5 && randomItem_Num < 6/10 {
-                //poisonappleを出現
-                let itemTexture = SKTexture(imageNamed: "apple_poison")
-                itemTexture.filteringMode = .linear
-                self.item = SKSpriteNode(texture: itemTexture)
-                self.item.physicsBody?.categoryBitMask = self.poisonappleCategory
-            } else {
-                return
-            }
-            self.item.position = CGPoint(x: item_x, y: item_y)
-            self.item.physicsBody = SKPhysicsBody(circleOfRadius: self.item.size.height/2)
-            self.item.physicsBody?.isDynamic = false
-//            self.item.physicsBody?.categoryBitMask = self.itemCategory
-            self.item.physicsBody?.contactTestBitMask = self.birdCategory
-            wall.addChild(self.item)
+//            let randomItem_Num = Float.random(in: 0...1)
+//            let item_x = CGFloat(upper.size.width + self.bird.size.width*2)
+//            let item_y = center_y + self.frame.size.height/2 * CGFloat.random(in: -0.5...0.5)
+//            switch randomItem_Num {
+//            case (0..<3/10):
+//                //appleを出現
+//                let itemTexture = SKTexture(imageNamed: "apple")
+//                itemTexture.filteringMode = .linear
+//                let item = SKSpriteNode(texture: itemTexture)
+//                item.physicsBody?.categoryBitMask = self.appleCategory
+//                item.position = CGPoint(x: item_x, y: item_y)
+//                item.physicsBody = SKPhysicsBody(circleOfRadius: item.size.height/2)
+//                item.physicsBody?.isDynamic = false
+//                item.physicsBody?.contactTestBitMask = self.birdCategory
+//                wall.addChild(item)
+//            case (3/10..<2/5):
+//                //greenappleを出現
+//                let itemTexture = SKTexture(imageNamed: "apple_green")
+//                itemTexture.filteringMode = .linear
+//                let item = SKSpriteNode(texture: itemTexture)
+//                item.physicsBody?.categoryBitMask = self.greenappleCategory
+//                item.position = CGPoint(x: item_x, y: item_y)
+//                item.physicsBody = SKPhysicsBody(circleOfRadius: item.size.height/2)
+//                item.physicsBody?.isDynamic = false
+//                item.physicsBody?.contactTestBitMask = self.birdCategory
+//                wall.addChild(item)
+//            case (2/5...3/5):
+//                //poisonappleを出現
+//                let itemTexture = SKTexture(imageNamed: "apple_poison")
+//                itemTexture.filteringMode = .linear
+//                let item = SKSpriteNode(texture: itemTexture)
+//                item.physicsBody?.categoryBitMask = self.poisonappleCategory
+//                item.position = CGPoint(x: item_x, y: item_y)
+//                item.physicsBody = SKPhysicsBody(circleOfRadius: item.size.height/2)
+//                item.physicsBody?.isDynamic = false
+//                item.physicsBody?.contactTestBitMask = self.birdCategory
+//                wall.addChild(item)
+//            default:
+//                return
+//            }
+            
+            
+            
+//            if randomItem_Num < 3/10 {
+//                //appleを出現
+//                let itemTexture = SKTexture(imageNamed: "apple")
+//                itemTexture.filteringMode = .linear
+//                let item = SKSpriteNode(texture: itemTexture)
+//                item.physicsBody?.categoryBitMask = self.appleCategory
+//                item.position = CGPoint(x: item_x, y: item_y)
+//                item.physicsBody = SKPhysicsBody(circleOfRadius: item.size.height/2)
+//                item.physicsBody?.isDynamic = false
+//                item.physicsBody?.contactTestBitMask = self.birdCategory
+//                wall.addChild(item)
+//            } else if randomItem_Num >= 3/10 && randomItem_Num < 2/5 {
+//                //greenappleを出現
+//                let itemTexture = SKTexture(imageNamed: "apple_green")
+//                itemTexture.filteringMode = .linear
+//                let item = SKSpriteNode(texture: itemTexture)
+//                item.physicsBody?.categoryBitMask = self.greenappleCategory
+//                item.position = CGPoint(x: item_x, y: item_y)
+//                item.physicsBody = SKPhysicsBody(circleOfRadius: item.size.height/2)
+//                item.physicsBody?.isDynamic = false
+//                item.physicsBody?.contactTestBitMask = self.birdCategory
+//                wall.addChild(item)
+//            } else if randomItem_Num >= 2/5 && randomItem_Num < 1 {
+//                //poisonappleを出現
+//                let itemTexture = SKTexture(imageNamed: "apple_poison")
+//                itemTexture.filteringMode = .linear
+//                let item = SKSpriteNode(texture: itemTexture)
+//                item.physicsBody?.categoryBitMask = self.poisonappleCategory
+//                item.position = CGPoint(x: item_x, y: item_y)
+//                item.physicsBody = SKPhysicsBody(circleOfRadius: item.size.height/2)
+//                item.physicsBody?.isDynamic = false
+//                item.physicsBody?.contactTestBitMask = self.birdCategory
+//                wall.addChild(item)
+//            }
             
             wall.run(wallAnimation)
             
@@ -337,7 +384,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             }
         }
         //アイテムに衝突した時の処理
-        else if (contact.bodyA.categoryBitMask & appleCategory) == appleCategory || (contact.bodyB.categoryBitMask & appleCategory) == appleCategory {
+        if (contact.bodyA.categoryBitMask & appleCategory) == appleCategory || (contact.bodyB.categoryBitMask & appleCategory) == appleCategory {
             contact.bodyB.node?.removeFromParent()
             print("アイテム獲得")
             score_item += 1
@@ -347,7 +394,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             let getMusic = SKAction.playSoundFileNamed("get.mp3", waitForCompletion: true)
             self.run(getMusic)
         }
-        else if (contact.bodyA.categoryBitMask & greenappleCategory) == greenappleCategory || (contact.bodyB.categoryBitMask & greenappleCategory) == greenappleCategory {
+        if (contact.bodyA.categoryBitMask & greenappleCategory) == greenappleCategory || (contact.bodyB.categoryBitMask & greenappleCategory) == greenappleCategory {
             contact.bodyB.node?.removeFromParent()
             print("アイテム獲得")
             score_item += 2
@@ -357,7 +404,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             let getMusic = SKAction.playSoundFileNamed("get.mp3", waitForCompletion: true)
             self.run(getMusic)
         }
-        else if (contact.bodyA.categoryBitMask & poisonappleCategory) == poisonappleCategory || (contact.bodyB.categoryBitMask & poisonappleCategory) == poisonappleCategory {
+        if (contact.bodyA.categoryBitMask & poisonappleCategory) == poisonappleCategory || (contact.bodyB.categoryBitMask & poisonappleCategory) == poisonappleCategory {
             contact.bodyB.node?.removeFromParent()
             print("アイテム獲得")
             score_item -= 1
