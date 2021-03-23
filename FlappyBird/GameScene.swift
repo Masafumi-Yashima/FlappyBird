@@ -20,7 +20,9 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
     let groundCategory:UInt32 = 1<<1         //0...0000010
     let wallCategory:UInt32 = 1<<2           //0...0000100
     let scoreCategory:UInt32 = 1<<3          //0...0001000
-    let itemCategory:UInt32 = 1<<4           //0...0010000
+    let appleCategory:UInt32 = 1<<4
+    let greenappleCategory:UInt32 = 1<<5
+    let poisonappleCategory:UInt32 = 1<<6
     
     //スコア用
     var score = 0
@@ -221,26 +223,31 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             let randomItem_Num = CGFloat.random(in: 0...1)
             let item_x = CGFloat(upper.size.width + self.bird.size.width*2)
             let item_y = center_y + self.frame.size.height/2 * CGFloat.random(in: -0.5...0.5)
-            if randomItem_Num < 1/3 {
+            if randomItem_Num < 3/10 {
                 //appleを出現
                 let itemTexture = SKTexture(imageNamed: "apple")
                 itemTexture.filteringMode = .linear
                 self.item = SKSpriteNode(texture: itemTexture)
-            } else if randomItem_Num >= 1/3 && randomItem_Num < 2/3 {
+                self.item.physicsBody?.categoryBitMask = self.appleCategory
+            } else if randomItem_Num >= 3/10 && randomItem_Num < 2/5 {
                 //greenappleを出現
                 let itemTexture = SKTexture(imageNamed: "apple_green")
                 itemTexture.filteringMode = .linear
                 self.item = SKSpriteNode(texture: itemTexture)
-            } else {
+                self.item.physicsBody?.categoryBitMask = self.greenappleCategory
+            } else if randomItem_Num >= 2/5 && randomItem_Num < 6/10 {
                 //poisonappleを出現
                 let itemTexture = SKTexture(imageNamed: "apple_poison")
                 itemTexture.filteringMode = .linear
                 self.item = SKSpriteNode(texture: itemTexture)
+                self.item.physicsBody?.categoryBitMask = self.poisonappleCategory
+            } else {
+                return
             }
             self.item.position = CGPoint(x: item_x, y: item_y)
             self.item.physicsBody = SKPhysicsBody(circleOfRadius: self.item.size.height/2)
             self.item.physicsBody?.isDynamic = false
-            self.item.physicsBody?.categoryBitMask = self.itemCategory
+//            self.item.physicsBody?.categoryBitMask = self.itemCategory
             self.item.physicsBody?.contactTestBitMask = self.birdCategory
             wall.addChild(self.item)
             
@@ -330,15 +337,37 @@ class GameScene: SKScene,SKPhysicsContactDelegate {
             }
         }
         //アイテムに衝突した時の処理
-        else if (contact.bodyA.categoryBitMask & itemCategory) == itemCategory || (contact.bodyB.categoryBitMask & itemCategory) == itemCategory {
+        else if (contact.bodyA.categoryBitMask & appleCategory) == appleCategory || (contact.bodyB.categoryBitMask & appleCategory) == appleCategory {
             contact.bodyB.node?.removeFromParent()
             print("アイテム獲得")
             score_item += 1
             itemScoreLabelNode.text = "Item Score:\(score_item)"
+            scoreLabelNode.text = "Score:\(score)"
             //アイテム獲得音を鳴らす
             let getMusic = SKAction.playSoundFileNamed("get.mp3", waitForCompletion: true)
             self.run(getMusic)
-        } else {
+        }
+        else if (contact.bodyA.categoryBitMask & greenappleCategory) == greenappleCategory || (contact.bodyB.categoryBitMask & greenappleCategory) == greenappleCategory {
+            contact.bodyB.node?.removeFromParent()
+            print("アイテム獲得")
+            score_item += 2
+            itemScoreLabelNode.text = "Item Score:\(score_item)"
+            scoreLabelNode.text = "Score:\(score)"
+            //アイテム獲得音を鳴らす
+            let getMusic = SKAction.playSoundFileNamed("get.mp3", waitForCompletion: true)
+            self.run(getMusic)
+        }
+        else if (contact.bodyA.categoryBitMask & poisonappleCategory) == poisonappleCategory || (contact.bodyB.categoryBitMask & poisonappleCategory) == poisonappleCategory {
+            contact.bodyB.node?.removeFromParent()
+            print("アイテム獲得")
+            score_item -= 1
+            itemScoreLabelNode.text = "Item Score:\(score_item)"
+            scoreLabelNode.text = "Score:\(score)"
+            //アイテム獲得音を鳴らす
+            let getMusic = SKAction.playSoundFileNamed("get.mp3", waitForCompletion: true)
+            self.run(getMusic)
+        }
+        else {
             //壁か地面と衝突した
             print("GameOver")
             
